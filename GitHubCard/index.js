@@ -2,6 +2,43 @@
            (replacing the palceholder with your Github name):
            https://api.github.com/users/<your name>
 */
+let entry = document.querySelector('.cards')
+axios.get('https://api.github.com/users/kkslider2130').then(res => entry.append(makeCard(res.data)));
+
+//original code//
+const followersArray = ['leachcoding', 'KateAnn19', 'josiahroa18', 'brudnak']
+/*followersArray.forEach(a => axios.get(`https://api.github.com/users/${a}`).then(res => entry.append(makeCard(res.data))));
+ */
+
+//stretch code attempt #1//
+
+/* let makeFollowerCards = (userName) => {
+  let followerList = `https://api.github.com/users/${userName}/followers`
+  axios.get(followerList).then(res => {
+    [...res.data].forEach(a => entry.append(makeCard(a)))
+    console.log([...res.data])
+  })
+
+}
+
+makeFollowerCards('kkslider2130') */
+
+//stretch code success!//
+
+let makeFollowerCards = (userName) => {
+  let followerList = `https://api.github.com/users/${userName}/followers`
+  axios.get(followerList).then(res => {
+    console.log(res.data)
+    return res.data.map(a => {
+      return a.login;
+    })
+
+  }).then(res => res.forEach(a => axios.get(`https://api.github.com/users/${a}`).then(res => entry.append(makeCard(res.data)))))
+
+}
+
+makeFollowerCards('kkslider2130')
+
 
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
@@ -24,7 +61,8 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+
+
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -53,3 +91,43 @@ const followersArray = [];
   luishrd
   bigknell
 */
+let makeCard = (obj) => {
+  let cardDiv = document.createElement('div');
+  let userImage = document.createElement('img');
+  let cardInfo = document.createElement('div');
+  let name = document.createElement('h3');
+  let userName = document.createElement('p');
+  let location = document.createElement('p');
+  let profile = document.createElement('p');
+  let followers = document.createElement('p');
+  let following = document.createElement('p');
+  let bio = document.createElement('p');
+  cardDiv.classList.add('card');
+  userImage.src = obj.avatar_url
+  cardInfo.classList.add('card-info');
+  name.classList.add('name');
+  name.innerHTML = obj.name;
+  userName.classList.add('username');
+  userName.innerHTML = obj.login;
+  location.innerHTML = obj.location;
+  profile.innerHTML = `profile: <a href=${obj.html_url}>${obj.html_url}</a>`;
+  followers.innerHTML = `followers: ${obj.followers}`;
+  following.innerHTML = `following: ${obj.following}`;
+  bio.innerHTML = `bio: ${obj.bio}`;
+  cardInfo.append(name);
+  cardInfo.append(userName);
+  cardInfo.append(location);
+  cardInfo.append(profile);
+  cardInfo.append(followers);
+  cardInfo.append(following);
+  cardInfo.append(bio);
+  cardDiv.append(userImage);
+  cardDiv.append(cardInfo);
+
+  return cardDiv;
+
+
+
+
+
+}
